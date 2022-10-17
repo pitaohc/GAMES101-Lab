@@ -7,6 +7,14 @@
 
 constexpr double MY_PI = 3.1415926;
 
+const float deg2rad(const float& deg);
+
+const Eigen::Matrix4f rotate(float angle);
+
+const Eigen::Matrix4f translate(const Eigen::Vector3f& orientation);
+
+const Eigen::Matrix4f scale(const Eigen::Vector3f& percentage);
+
 Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 {
     Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
@@ -31,9 +39,23 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
     // TODO: Copy-paste your implementation from the previous assignment.
-    Eigen::Matrix4f projection;
+    Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+    // Create the projection matrix for the given parameters.
+    // Then return it.
+    //1. 计算宽高
+    float height = 2 * zNear * tan(deg2rad(eye_fov / 2)), width = height * aspect_ratio;
 
-    return projection;
+    //2. 透视投影
+    projection << zNear, 0, 0, 0,
+        0, zNear, 0, 0,
+        0, 0, zNear + zFar, -zNear * zFar,
+        0, 0, 1, 0;
+
+    //3. 正交投影
+    Eigen::Matrix4f my_scale = scale({ -1 / width, -1 / height, 1 / (zFar - zNear) });
+    Eigen::Matrix4f my_translate = translate({ 0, 0, zNear + (zFar - zNear) / 2 });
+
+    return my_scale * my_translate * projection;
 }
 
 int main(int argc, const char** argv)
@@ -125,4 +147,51 @@ int main(int argc, const char** argv)
 
     return 0;
 }
+
+/**
+ * 角度转换成弧度
+ * */
+const float deg2rad(const float& deg) {
+    return (float)(deg / 180.0 * acos(-1));
+}
+
+/**
+ * 旋转指定角度
+ * */
+const Eigen::Matrix4f rotate(float angle) {
+    Eigen::Matrix4f matrix;
+    float cosx = cos(deg2rad(angle));
+    float sinx = sin(deg2rad(angle));
+    matrix << cosx, -sinx, 0, 0,
+        sinx, cosx, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+    return matrix;
+}
+
+/**
+ * 缩放三个轴到指定大小
+ * */
+const Eigen::Matrix4f scale(const Vector3f& percentage) {
+    Eigen::Matrix4f result;
+    result << percentage[0], 0, 0, 0,
+        0, percentage[1], 0, 0,
+        0, 0, percentage[2], 0,
+        0, 0, 0, 1;
+    return result;
+}
+
+/**
+ * 平移对象
+ * @param orientation 方向向量
+ * */
+const Eigen::Matrix4f translate(const Vector3f& orientation) {
+    Eigen::Matrix4f result;
+    result << 1, 0, 0, orientation[0],
+        0, 1, 0, orientation[1],
+        0, 0, 1, orientation[2],
+        0, 0, 0, 1;
+    return result;
+}
+
 // clang-format on
