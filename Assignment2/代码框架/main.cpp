@@ -38,20 +38,19 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
 
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
-    // TODO: Copy-paste your implementation from the previous assignment.
     Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
     // Create the projection matrix for the given parameters.
     // Then return it.
-    //1. ¼ÆËã¿í¸ß
+    //1. è®¡ç®—å®½é«˜
     float height = 2 * zNear * tan(deg2rad(eye_fov / 2)), width = height * aspect_ratio;
 
-    //2. Í¸ÊÓÍ¶Ó°
+    //2. é€è§†æŠ•å½±
     projection << zNear, 0, 0, 0,
         0, zNear, 0, 0,
         0, 0, zNear + zFar, -zNear * zFar,
         0, 0, 1, 0;
 
-    //3. Õı½»Í¶Ó°
+    //3. æ­£äº¤æŠ•å½±
     Eigen::Matrix4f my_scale = scale({ -1 / width, -1 / height, 1 / (zFar - zNear) });
     Eigen::Matrix4f my_translate = translate({ 0, 0, zNear + (zFar - zNear) / 2 });
 
@@ -149,14 +148,14 @@ int main(int argc, const char** argv)
 }
 
 /**
- * ½Ç¶È×ª»»³É»¡¶È
+ * è§’åº¦è½¬æ¢æˆå¼§åº¦
  * */
 const float deg2rad(const float& deg) {
     return (float)(deg / 180.0 * acos(-1));
 }
 
 /**
- * Ğı×ªÖ¸¶¨½Ç¶È
+ * æ—‹è½¬æŒ‡å®šè§’åº¦
  * */
 const Eigen::Matrix4f rotate(float angle) {
     Eigen::Matrix4f matrix;
@@ -170,7 +169,7 @@ const Eigen::Matrix4f rotate(float angle) {
 }
 
 /**
- * Ëõ·ÅÈı¸öÖáµ½Ö¸¶¨´óĞ¡
+ * ç¼©æ”¾ä¸‰ä¸ªè½´åˆ°æŒ‡å®šå¤§å°
  * */
 const Eigen::Matrix4f scale(const Vector3f& percentage) {
     Eigen::Matrix4f result;
@@ -182,8 +181,8 @@ const Eigen::Matrix4f scale(const Vector3f& percentage) {
 }
 
 /**
- * Æ½ÒÆ¶ÔÏó
- * @param orientation ·½ÏòÏòÁ¿
+ * å¹³ç§»å¯¹è±¡
+ * @param orientation æ–¹å‘å‘é‡
  * */
 const Eigen::Matrix4f translate(const Vector3f& orientation) {
     Eigen::Matrix4f result;
