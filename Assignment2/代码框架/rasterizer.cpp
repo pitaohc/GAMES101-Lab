@@ -132,7 +132,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle &t) {
     // iterate through the pixel and find if the current pixel is inside the triangle
     for (int x = 0; x < height; ++x) {
         for (int y = 0; y < width; ++y) {
-            if (insideTriangle(x, y, t.v)) { //在三角形内部
+            if (insideTriangle(x + 0.5, y + 0.5, t.v)) { //在三角形内部
                 // If so, use the following code to get the interpolated z value.
                 auto [alpha, beta, gamma] = computeBarycentric2D(x, y, t.v); //计算重心二维
                 float w_reciprocal = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
