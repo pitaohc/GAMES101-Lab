@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "rasterizer.hpp"
 #include <opencv2/opencv.hpp>
-#include <math.h>
+#include <cmath>
 #include <stdexcept>
 
 

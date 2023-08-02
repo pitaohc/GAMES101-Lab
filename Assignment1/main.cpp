@@ -20,7 +20,7 @@ const Eigen::Matrix4f scale(const Eigen::Vector3f &percentage);
  * @param eye_pos 摄像机位置向量
  * @return 视角变换矩阵
  * */
-Eigen::Matrix4f get_view_matrix(const Eigen::Vector3f& eye_pos) {
+Eigen::Matrix4f get_view_matrix(const Eigen::Vector3f &eye_pos) {
     Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
 
     view = translate(-eye_pos) * view;
@@ -73,6 +73,29 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     Eigen::Matrix4f my_translate = translate({0, 0, zNear + (zFar - zNear) / 2});
 
     return my_scale * my_translate * projection;
+//    // Students will implement this function
+//
+//    //实际视角方向为Z轴负方向，因此zNear和zFar实际应为负数
+//    zNear = -zNear;
+//    zFar = -zFar;
+//
+//    Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+//    // Create the projection matrix for the given parameters.
+//    // Then return it.
+//    //1. 计算宽高
+//    float top = abs(zNear) * tan(deg2rad(eye_fov / 2)), right = top * aspect_ratio;
+//    std::cout << "top:" << top << ", right:" << right << std::endl;
+//    //2. 透视投影
+//    projection << zNear / right, 0, 0, 0,
+//            0, zNear / top, 0, 0,
+//            0, 0, (zNear + zFar) / (zNear - zFar), (2 * zNear * zFar) / (zFar - zNear),
+//            0, 0, 1, 0;
+//
+//    //3. 正交投影
+////    Eigen::Matrix4f my_scale = scale({-1 / width, -1 / height, 1 / (zFar - zNear)});
+////    Eigen::Matrix4f my_translate = translate({0, 0, zNear + (zFar - zNear) / 2});
+//
+//    return projection;
 }
 
 int main(int argc, const char **argv) {
@@ -117,7 +140,7 @@ int main(int argc, const char **argv) {
         r.set_model(get_model_matrix(angle));
         r.set_view(get_view_matrix(eye_pos));
         r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
-
+        std::cout << "projection matrix: " << get_projection_matrix(45, 1, 0.1, 50) << std::endl;
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
         cv::Mat image(700, 700, CV_32FC3, r.frame_buffer().data());
         image.convertTo(image, CV_8UC3, 1.0f);
@@ -126,12 +149,10 @@ int main(int argc, const char **argv) {
 
         return 0;
     }
-    //debug
-//    angle = 70;
-    //end debug
+
     while (key != 27) {
         r.clear(rst::Buffers::Color | rst::Buffers::Depth); //清除帧缓冲区和深度缓冲区
-        std::cout << "angle:\n" << angle << std::endl;
+        std::cout << "angle: " << angle << std::endl;
 //        std::cout << "model transform:\n" << get_model_matrix(angle) << std::endl;
         //设置MVP变换矩阵
         r.set_model(get_model_matrix(angle)); //model transform
